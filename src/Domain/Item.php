@@ -11,7 +11,8 @@ final class Item
         public readonly string $name,
         public readonly int $priceInCents,
         public readonly int $stock,
-    ) {}
+    ) {
+    }
 
     public function isAvailable(): bool
     {

@@ -19,7 +19,8 @@ final class VendingMachine
         private array $items,
         private array $coinInventory,
         private array $insertedCoins = [],
-    ) {}
+    ) {
+    }
 
     public function insertCoin(Coin $coin): void
     {
@@ -101,17 +102,26 @@ final class VendingMachine
 
     public function getInsertedCents(): int
     {
-        return (int) array_sum(array_map(fn(Coin $c) => $c->value, $this->insertedCoins));
+        return (int) array_sum(array_map(fn (Coin $c) => $c->value, $this->insertedCoins));
     }
 
     /** @return array<string, Item> */
-    public function getItems(): array { return $this->items; }
+    public function getItems(): array
+    {
+        return $this->items;
+    }
 
     /** @return array<int, int> */
-    public function getCoinInventory(): array { return $this->coinInventory; }
+    public function getCoinInventory(): array
+    {
+        return $this->coinInventory;
+    }
 
     /** @return Coin[] */
-    public function getInsertedCoins(): array { return $this->insertedCoins; }
+    public function getInsertedCoins(): array
+    {
+        return $this->insertedCoins;
+    }
 
     /**
      * Greedy change-making: largest coin first.
