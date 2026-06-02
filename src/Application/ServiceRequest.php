@@ -6,9 +6,6 @@ namespace App\Application;
 
 final class ServiceRequest
 {
-    private const VALID_SELECTORS = ['water', 'juice', 'soda'];
-    private const VALID_COINS     = ['0.05', '0.10', '0.25', '1.00'];
-
     /**
      * @param array<string, int> $items
      * @param array<string, int> $coins
@@ -31,9 +28,7 @@ final class ServiceRequest
                 $errors[] = '"items" must be an object';
             } else {
                 foreach ($items as $selector => $stock) {
-                    if (!in_array(strtolower((string) $selector), self::VALID_SELECTORS, true)) {
-                        $errors[] = "Unknown item \"{$selector}\". Valid: " . implode(', ', self::VALID_SELECTORS);
-                    } elseif (!is_int($stock) || $stock < 0) {
+                    if (!\is_int($stock) || $stock < 0) {
                         $errors[] = "Stock for \"{$selector}\" must be a non-negative integer";
                     }
                 }
@@ -45,9 +40,7 @@ final class ServiceRequest
                 $errors[] = '"coins" must be an object';
             } else {
                 foreach ($coins as $value => $count) {
-                    if (!in_array((string) $value, self::VALID_COINS, true)) {
-                        $errors[] = "Unknown coin \"{$value}\". Valid: " . implode(', ', self::VALID_COINS);
-                    } elseif (!is_int($count) || $count < 0) {
+                    if (!\is_int($count) || $count < 0) {
                         $errors[] = "Count for coin \"{$value}\" must be a non-negative integer";
                     }
                 }
