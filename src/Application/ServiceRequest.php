@@ -27,7 +27,7 @@ final class ServiceRequest
         $errors = [];
 
         if ($items !== null) {
-            if (!is_array($items)) {
+            if (!\is_array($items)) {
                 $errors[] = '"items" must be an object';
             } else {
                 foreach ($items as $selector => $stock) {

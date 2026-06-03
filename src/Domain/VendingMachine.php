@@ -136,7 +136,7 @@ final class VendingMachine
         }
 
         $change       = [];
-        $denominations = [Coin::ONE_DOLLAR, Coin::TWENTY_FIVE, Coin::TEN_CENTS, Coin::FIVE_CENTS];
+        $denominations = [Coin::ONE_HUNDRED, Coin::TWENTY_FIVE, Coin::TEN, Coin::FIVE];
 
         foreach ($denominations as $coin) {
             $available = $inventory[$coin->value] ?? 0;
