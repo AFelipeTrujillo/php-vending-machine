@@ -4,7 +4,7 @@ Run the full quality gate for this project in this order:
    `docker compose exec app vendor/bin/phpunit --colors=always`
 
 2. Run PHP CS Fixer in dry-run mode to check code style:
-   `docker compose exec app vendor/bin/php-cs-fixer fix --dry-run --diff`
+   `docker compose exec app vendor/bin/php-cs-fixer fix --dry-run --diff --allow-risky=yes`
 
 3. Run PHPStan static analysis:
    `docker compose exec app vendor/bin/phpstan analyse src --level=8`
