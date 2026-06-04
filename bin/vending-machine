@@ -1,0 +1,25 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+require __DIR__ . '/../vendor/autoload.php';
+
+use App\Application\GetStatusUseCase;
+use App\Application\InsertCoinUseCase;
+use App\Application\RestockUseCase;
+use App\Application\ReturnCoinUseCase;
+use App\Application\SelectItemUseCase;
+use App\Infrastructure\Cli\VendingMachineCommand;
+use App\Infrastructure\Persistence\SqliteVendingMachineRepository;
+
+$dbPath     = $_ENV['DB_PATH'] ?? dirname(__DIR__) . '/database/vending-machine.db';
+$repository = new SqliteVendingMachineRepository($dbPath);
+
+(new VendingMachineCommand(
+    new InsertCoinUseCase($repository),
+    new SelectItemUseCase($repository),
+    new ReturnCoinUseCase($repository),
+    new RestockUseCase($repository),
+    new GetStatusUseCase($repository),
+))->run();
