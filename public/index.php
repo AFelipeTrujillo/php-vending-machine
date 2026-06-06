@@ -16,27 +16,13 @@ $app = AppFactory::create();
 
 $app->addBodyParsingMiddleware();
 
-$errorMiddleware = $app->addErrorMiddleware(true, true, true);
-$errorMiddleware->setDefaultErrorHandler(
-    function (
-        \Psr\Http\Message\ServerRequestInterface $request,
-        \Throwable $exception,
-        bool $displayErrorDetails,
-    ) use ($app): \Psr\Http\Message\ResponseInterface {
-        $status = match (true) {
-            $exception instanceof \Slim\Exception\HttpNotFoundException         => 404,
-            $exception instanceof \Slim\Exception\HttpMethodNotAllowedException => 405,
-            default                                                             => 500,
-        };
-
-        $response = $app->getResponseFactory()->createResponse($status);
-        $response->getBody()->write((string) \json_encode([
-            'error' => $displayErrorDetails ? $exception->getMessage() : 'Internal server error',
-        ], \JSON_PRETTY_PRINT));
-
-        return $response->withHeader('Content-Type', 'application/json');
-    }
+$errorHandler = $container->get(App\Infrastructure\Http\JsonErrorHandler::class);
+$errorMiddleware = $app->addErrorMiddleware(
+    displayErrorDetails: ($_ENV['APP_ENV'] ?? 'dev') === 'dev',
+    logErrors: true,
+    logErrorDetails: true,
 );
+$errorMiddleware->setDefaultErrorHandler($errorHandler);
 
 (require __DIR__ . '/../src/Infrastructure/Http/routes.php')($app);
 

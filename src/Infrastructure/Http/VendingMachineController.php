@@ -26,6 +26,7 @@ final class VendingMachineController
         private readonly ReturnCoinUseCase $returnCoin,
         private readonly ServiceUseCase    $service,
         private readonly GetStatusUseCase  $getStatus,
+        private readonly ResponseHandler $responseHandler,
     ) {
     }
 
@@ -35,43 +36,33 @@ final class VendingMachineController
         $coinValue = is_array($body) ? ($body['coin'] ?? null) : null;
 
         if ($coinValue === null) {
-            return $this->json($response, ['error' => 'Missing coin value'], 400);
+            return $this->responseHandler->error($response, 'Missing coin value', 400);
         }
 
-        try {
-            $totalCents = $this->insertCoin->execute((float) $coinValue);
+        $totalCents = $this->insertCoin->execute((float) $coinValue);
 
-            return $this->json($response, [
-                'inserted'       => (float) $coinValue,
-                'total_inserted' => $totalCents / 100,
-            ]);
-        } catch (\InvalidArgumentException $e) {
-            return $this->json($response, ['error' => $e->getMessage()], 400);
-        }
+        return $this->responseHandler->success($response, [
+            'inserted'       => (float) $coinValue,
+            'total_inserted' => $totalCents / 100,
+        ]);
     }
 
     /** @param array<string, string> $args */
     public function selectItem(Request $request, Response $response, array $args): Response
     {
-        try {
-            [$item, $change] = $this->selectItem->execute($args['item']);
+        [$item, $change] = $this->selectItem->execute($args['item']);
 
-            return $this->json($response, [
-                'item'   => strtoupper($item->name),
-                'change' => array_map(fn (Coin $c) => $c->toFloat(), $change),
-            ]);
-        } catch (InsufficientFunds | OutOfStock | CannotMakeChange $e) {
-            return $this->json($response, ['error' => $e->getMessage()], 400);
-        } catch (\InvalidArgumentException $e) {
-            return $this->json($response, ['error' => $e->getMessage()], 404);
-        }
+        return $this->responseHandler->success($response, [
+            'item'   => strtoupper($item->name),
+            'change' => array_map(fn (Coin $c) => $c->toFloat(), $change),
+        ]);
     }
 
     public function returnCoin(Request $request, Response $response): Response
     {
         $coins = $this->returnCoin->execute();
 
-        return $this->json($response, [
+        return $this->responseHandler->success($response, [
             'returned' => array_map(fn (Coin $c) => $c->toFloat(), $coins),
         ]);
     }
@@ -80,18 +71,14 @@ final class VendingMachineController
     {
         $body = $request->getParsedBody();
 
-        try {
-            $serviceRequest = ServiceRequest::fromRawInput(
-                \is_array($body) ? ($body['items'] ?? null) : null,
-                \is_array($body) ? ($body['coins'] ?? null) : null,
-            );
-        } catch (ValidationException $e) {
-            return $this->json($response, ['errors' => $e->getErrors()], 422);
-        }
+        $serviceRequest = ServiceRequest::fromRawInput(
+            \is_array($body) ? ($body['items'] ?? null) : null,
+            \is_array($body) ? ($body['coins'] ?? null) : null,
+        );
 
         $this->service->execute($serviceRequest);
 
-        return $this->json($response, ['message' => 'Machine restocked successfully']);
+        return $this->responseHandler->success($response, ['message' => 'Machine restocked successfully']);
     }
 
     public function status(Request $request, Response $response): Response
@@ -111,20 +98,11 @@ final class VendingMachineController
             $coinsData[number_format($cents / 100, 2)] = $count;
         }
 
-        return $this->json($response, [
+        return $this->formatter->success($response, [
             'total_inserted' => $machine->getInsertedCents() / 100,
             'items'          => $itemsData,
             'coins'          => $coinsData,
         ]);
     }
 
-    /** @param array<string, mixed> $data */
-    private function json(Response $response, array $data, int $status = 200): Response
-    {
-        $response->getBody()->write((string) json_encode($data, JSON_PRETTY_PRINT));
-
-        return $response
-            ->withHeader('Content-Type', 'application/json')
-            ->withStatus($status);
-    }
 }
