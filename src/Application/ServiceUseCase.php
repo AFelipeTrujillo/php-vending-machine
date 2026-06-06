@@ -13,10 +13,14 @@ final class ServiceUseCase
     ) {
     }
 
-    public function execute(ServiceRequest $request): void
+    /**
+     * @param array<string, int> $items   selector => stock
+     * @param array<string, int> $coins   "0.25" => count
+     */
+    public function execute(array $items, array $coins): void
     {
         $machine = $this->repository->load();
-        $machine->service($request->items, $request->coins);
+        $machine->service($items, $coins);
         $this->repository->save($machine);
     }
 }

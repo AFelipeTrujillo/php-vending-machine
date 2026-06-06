@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional;
 
-use App\Application\ServiceRequest;
 use App\Application\ServiceUseCase;
 use App\Infrastructure\Persistence\SqliteVendingMachineRepository;
 use DI\ContainerBuilder;
@@ -25,13 +24,13 @@ final class ApiTest extends TestCase
         $repository = new SqliteVendingMachineRepository($this->dbPath);
 
         (new ServiceUseCase($repository))->execute(
-            ServiceRequest::fromRawInput(
-                ['water' => 10, 'juice' => 10, 'soda' => 10],
-                ['0.05' => 20, '0.10' => 20, '0.25' => 20, '1.00' => 10],
-            )
+            ['water' => 10, 'juice' => 10, 'soda' => 10],
+            ['0.05' => 20, '0.10' => 20, '0.25' => 20, '1.00' => 10],
         );
 
         $containerBuilder = new ContainerBuilder();
+        $containerBuilder->addDefinitions(require __DIR__ . '/../../config/container.php');
+
         $containerBuilder->addDefinitions([
             \App\Infrastructure\Persistence\VendingMachineRepositoryInterface::class =>
                 \DI\value($repository),
@@ -44,6 +43,10 @@ final class ApiTest extends TestCase
         AppFactory::setContainer($container);
         $this->app = AppFactory::create();
         $this->app->addBodyParsingMiddleware();
+
+        $errorHandler = $container->get(\App\Infrastructure\Http\JsonErrorHandler::class);
+        $errorMiddleware = $this->app->addErrorMiddleware(false, false, false);
+        $errorMiddleware->setDefaultErrorHandler($errorHandler);
 
         (require __DIR__ . '/../../src/Infrastructure/Http/routes.php')($this->app);
     }

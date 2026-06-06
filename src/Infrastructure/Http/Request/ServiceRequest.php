@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Application;
+namespace App\Infrastructure\Http\Request;
 
+use App\Application\Exception\ValidationException;
 use App\Domain\Coin;
 
 final class ServiceRequest

@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Http;
 
+use App\Application\Exception\ValidationException;
+use App\Domain\Exception\CannotMakeChange;
+use App\Domain\Exception\InsufficientFunds;
+use App\Domain\Exception\OutOfStock;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Log\LoggerInterface;
@@ -30,8 +34,8 @@ final class JsonErrorHandler
             $exception instanceof InsufficientFunds             => 400,
             $exception instanceof OutOfStock                    => 400,
             $exception instanceof CannotMakeChange              => 400,
-            $exception instanceof \InvalidArgumentException     => 400,
             $exception instanceof ValidationException           => 400,
+            $exception instanceof \InvalidArgumentException     => 400,
             default                                             => 500,
         };
 

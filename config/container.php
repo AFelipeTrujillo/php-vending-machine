@@ -13,8 +13,11 @@ use Psr\Log\LoggerInterface;
 return [
     LoggerInterface::class => \DI\factory(function () {
         $logger = new Logger('vending-machine');
-        $logger->pushHandler(new StreamHandler('php://stderr', Logger::DEBUG));
 
+        if (getenv('APP_ENV') === 'dev') {
+            $logger->pushHandler(new StreamHandler('php://stderr', Logger::DEBUG));
+        }
+        
         return $logger;
     }),
 

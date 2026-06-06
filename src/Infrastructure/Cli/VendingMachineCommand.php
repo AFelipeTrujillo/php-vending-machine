@@ -123,11 +123,11 @@ final class VendingMachineCommand
                 }
 
             } elseif ($command === 'STATUS') {
-                $machine = $this->getStatus->execute();
-                echo sprintf("Inserted: %.2f\n", $machine->getInsertedCents() / 100);
+                $status = $this->getStatus->execute();
+                echo sprintf("Inserted: %.2f\n", $status->total_inserted);
 
-                foreach ($machine->getItems() as $item) {
-                    echo sprintf("  %-6s %d units @ %.2f\n", $item->name, $item->stock, $item->priceInCents / 100);
+                foreach ($status->items as $selector => $itemData) {
+                    echo sprintf("  %-6s %d units @ %.2f\n", ucfirst($selector), $itemData['stock'], $itemData['price']);
                 }
 
             } else {

@@ -8,13 +8,9 @@ use App\Application\GetStatusUseCase;
 use App\Application\InsertCoinUseCase;
 use App\Application\ReturnCoinUseCase;
 use App\Application\SelectItemUseCase;
-use App\Application\ServiceRequest;
 use App\Application\ServiceUseCase;
-use App\Application\ValidationException;
 use App\Domain\Coin;
-use App\Domain\Exception\CannotMakeChange;
-use App\Domain\Exception\InsufficientFunds;
-use App\Domain\Exception\OutOfStock;
+use App\Infrastructure\Http\Request\ServiceRequest;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -76,32 +72,22 @@ final class VendingMachineController
             \is_array($body) ? ($body['coins'] ?? null) : null,
         );
 
-        $this->service->execute($serviceRequest);
+        $this->service->execute(
+            items: $serviceRequest->items,
+            coins: $serviceRequest->coins,
+        );
 
         return $this->responseHandler->success($response, ['message' => 'Machine restocked successfully']);
     }
 
     public function status(Request $request, Response $response): Response
     {
-        $machine   = $this->getStatus->execute();
-        $itemsData = [];
-
-        foreach ($machine->getItems() as $selector => $item) {
-            $itemsData[$selector] = [
-                'price' => $item->priceInCents / 100,
-                'stock' => $item->stock,
-            ];
-        }
-
-        $coinsData = [];
-        foreach ($machine->getCoinInventory() as $cents => $count) {
-            $coinsData[number_format($cents / 100, 2)] = $count;
-        }
+        $statusResponse = $this->getStatus->execute();
 
         return $this->responseHandler->success($response, [
-            'total_inserted' => $machine->getInsertedCents() / 100,
-            'items'          => $itemsData,
-            'coins'          => $coinsData,
+            'total_inserted' => $statusResponse->total_inserted,
+            'items'          => $statusResponse->items,
+            'coins'          => $statusResponse->coins,
         ]);
     }
 

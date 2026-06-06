@@ -9,7 +9,6 @@ use App\Application\InsertCoinUseCase;
 use App\Application\RestockUseCase;
 use App\Application\ReturnCoinUseCase;
 use App\Application\SelectItemUseCase;
-use App\Application\ServiceRequest;
 use App\Application\ServiceUseCase;
 use App\Infrastructure\Cli\VendingMachineCommand;
 use App\Infrastructure\Persistence\SqliteVendingMachineRepository;
@@ -28,10 +27,8 @@ final class CliTest extends TestCase
         $repository = new SqliteVendingMachineRepository($this->dbPath);
 
         (new ServiceUseCase($repository))->execute(
-            ServiceRequest::fromRawInput(
-                ['water' => 10, 'juice' => 10, 'soda' => 10],
-                ['0.05' => 20, '0.10' => 20, '0.25' => 20, '1.00' => 10],
-            )
+            ['water' => 10, 'juice' => 10, 'soda' => 10],
+            ['0.05' => 20, '0.10' => 20, '0.25' => 20, '1.00' => 10],
         );
 
         $this->command = new VendingMachineCommand(

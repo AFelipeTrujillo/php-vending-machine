@@ -7,7 +7,6 @@ namespace App\Tests\Integration;
 use App\Application\InsertCoinUseCase;
 use App\Application\ReturnCoinUseCase;
 use App\Application\SelectItemUseCase;
-use App\Application\ServiceRequest;
 use App\Application\ServiceUseCase;
 use App\Domain\Coin;
 use App\Domain\Exception\InsufficientFunds;
@@ -26,10 +25,8 @@ final class UseCaseTest extends TestCase
         $this->repository = new SqliteVendingMachineRepository($this->dbPath);
 
         (new ServiceUseCase($this->repository))->execute(
-            ServiceRequest::fromRawInput(
-                ['water' => 10, 'juice' => 10, 'soda' => 10],
-                ['0.05' => 20, '0.10' => 20, '0.25' => 20, '1.00' => 10],
-            )
+            ['water' => 10, 'juice' => 10, 'soda' => 10],
+            ['0.05' => 20, '0.10' => 20, '0.25' => 20, '1.00' => 10],
         );
     }
 
