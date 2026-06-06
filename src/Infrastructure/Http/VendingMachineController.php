@@ -98,7 +98,7 @@ final class VendingMachineController
             $coinsData[number_format($cents / 100, 2)] = $count;
         }
 
-        return $this->formatter->success($response, [
+        return $this->responseHandler->success($response, [
             'total_inserted' => $machine->getInsertedCents() / 100,
             'items'          => $itemsData,
             'coins'          => $coinsData,
