@@ -107,7 +107,7 @@ The container runs the database migration automatically before starting the PHP 
 ```bash
 curl -X POST http://localhost:8080/coins \
   -H "Content-Type: application/json" \
-  -d '{"coin": 0.25}'
+  -d '{"coin": "0.25"}'
 ```
 
 **Buy an item (example: water)**

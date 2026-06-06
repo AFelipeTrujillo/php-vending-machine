@@ -13,7 +13,14 @@ enum Coin: int
 
     public static function fromFloat(float $value): self
     {
-        return match ((int) round($value * 100)) {
+
+        $cents = $value * 100;
+
+        if (floor($cents) != $cents) {
+            throw new \InvalidArgumentException("Invalid coin: {$value}. Exact value required");
+        }
+
+        return match ((int) $cents) {
             5   => self::FIVE,
             10  => self::TEN,
             25  => self::TWENTY_FIVE,

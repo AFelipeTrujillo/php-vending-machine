@@ -14,10 +14,10 @@ return [
     LoggerInterface::class => \DI\factory(function () {
         $logger = new Logger('vending-machine');
 
-        if (getenv('APP_ENV') === 'dev') {
+        if ($_ENV['APP_ENV'] === 'dev') {
             $logger->pushHandler(new StreamHandler('php://stderr', Logger::DEBUG));
         }
-        
+
         return $logger;
     }),
 

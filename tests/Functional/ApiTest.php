@@ -60,7 +60,7 @@ final class ApiTest extends TestCase
 
     public function test_insert_coin_returns_200(): void
     {
-        $request  = $this->makeRequest('POST', '/coins', ['coin' => 1]);
+        $request  = $this->makeRequest('POST', '/coins', ['coin' => "1"]);
         $response = $this->app->handle($request);
 
         $this->assertSame(200, $response->getStatusCode());
@@ -72,7 +72,7 @@ final class ApiTest extends TestCase
 
     public function test_insert_invalid_coin_returns_400(): void
     {
-        $request  = $this->makeRequest('POST', '/coins', ['coin' => 0.30]);
+        $request  = $this->makeRequest('POST', '/coins', ['coin' => "0.30"]);
         $response = $this->app->handle($request);
 
         $this->assertSame(400, $response->getStatusCode());
@@ -80,9 +80,9 @@ final class ApiTest extends TestCase
 
     public function test_buy_item_with_exact_change(): void
     {
-        $this->app->handle($this->makeRequest('POST', '/coins', ['coin' => 1]));
-        $this->app->handle($this->makeRequest('POST', '/coins', ['coin' => 0.25]));
-        $this->app->handle($this->makeRequest('POST', '/coins', ['coin' => 0.25]));
+        $this->app->handle($this->makeRequest('POST', '/coins', ['coin' => "1"]));
+        $this->app->handle($this->makeRequest('POST', '/coins', ['coin' => "0.25"]));
+        $this->app->handle($this->makeRequest('POST', '/coins', ['coin' => "0.25"]));
 
         $response = $this->app->handle($this->makeRequest('POST', '/items/soda'));
         $body     = json_decode((string) $response->getBody(), true);
@@ -94,7 +94,7 @@ final class ApiTest extends TestCase
 
     public function test_buy_item_returns_change(): void
     {
-        $this->app->handle($this->makeRequest('POST', '/coins', ['coin' => 1]));
+        $this->app->handle($this->makeRequest('POST', '/coins', ['coin' => "1"]));
 
         $response = $this->app->handle($this->makeRequest('POST', '/items/water'));
         $body     = json_decode((string) $response->getBody(), true);
@@ -108,7 +108,7 @@ final class ApiTest extends TestCase
 
     public function test_buy_item_with_insufficient_funds_returns_400(): void
     {
-        $this->app->handle($this->makeRequest('POST', '/coins', ['coin' => 0.25]));
+        $this->app->handle($this->makeRequest('POST', '/coins', ['coin' => "0.25"]));
 
         $response = $this->app->handle($this->makeRequest('POST', '/items/water'));
 
@@ -117,8 +117,8 @@ final class ApiTest extends TestCase
 
     public function test_return_coin(): void
     {
-        $this->app->handle($this->makeRequest('POST', '/coins', ['coin' => 0.10]));
-        $this->app->handle($this->makeRequest('POST', '/coins', ['coin' => 0.10]));
+        $this->app->handle($this->makeRequest('POST', '/coins', ['coin' => "0.10"]));
+        $this->app->handle($this->makeRequest('POST', '/coins', ['coin' => "0.10"]));
 
         $response = $this->app->handle($this->makeRequest('POST', '/return-coin'));
         $body     = json_decode((string) $response->getBody(), true);

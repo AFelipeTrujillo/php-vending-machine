@@ -99,6 +99,11 @@ final class VendingMachineCommand
     {
         try {
             if (\is_numeric($command)) {
+
+                if (!preg_match('/^\d+(\.\d{1,2})?$/', $command)) {
+                    throw new \InvalidArgumentException('Invalid coin format');
+                }
+
                 $total = $this->insertCoin->execute((float) $command);
                 echo sprintf("Inserted. Total: %.2f\n", $total / 100);
 

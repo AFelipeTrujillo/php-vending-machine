@@ -32,7 +32,11 @@ final class VendingMachineController
         $coinValue = is_array($body) ? ($body['coin'] ?? null) : null;
 
         if ($coinValue === null) {
-            return $this->responseHandler->error($response, 'Missing coin value', 400);
+            throw new \App\Application\Exception\ValidationException(['Coin is required']);
+        }
+
+        if (!preg_match('/^\d+(\.\d{1,2})?$/', $coinValue)) {
+            throw new \App\Application\Exception\ValidationException(['Invalid coin format']);
         }
 
         $totalCents = $this->insertCoin->execute((float) $coinValue);

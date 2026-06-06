@@ -8,3 +8,4 @@ services:
       - /app/vendor
     environment:
       DB_PATH: /app/database/vending-machine.db
+      APP_ENV: dev
