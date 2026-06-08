@@ -11,9 +11,9 @@ Then run each example and show the actual responses:
 Expected output: `{ "item": "SODA", "change": [] }`
 
 ```
-POST /coins  {"coin": 1}
-POST /coins  {"coin": 0.25}
-POST /coins  {"coin": 0.25}
+POST /coins  {"coin": "1"}
+POST /coins  {"coin": "0.25"}
+POST /coins  {"coin": "0.25"}
 POST /items/soda
 ```
 
