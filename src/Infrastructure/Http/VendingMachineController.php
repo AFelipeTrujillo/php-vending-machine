@@ -35,6 +35,10 @@ final class VendingMachineController
             throw new \App\Application\Exception\ValidationException(['Coin is required']);
         }
 
+        if (!is_string($coinValue)) {
+            throw new \App\Application\Exception\ValidationException(['Coin must be a string']);
+        }
+
         if (!preg_match('/^\d+(\.\d{1,2})?$/', $coinValue)) {
             throw new \App\Application\Exception\ValidationException(['Invalid coin format']);
         }

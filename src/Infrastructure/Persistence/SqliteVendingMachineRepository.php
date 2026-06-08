@@ -7,8 +7,9 @@ namespace App\Infrastructure\Persistence;
 use App\Domain\Coin;
 use App\Domain\Item;
 use App\Domain\VendingMachine;
+use App\Domain\VendingMachineRepository;
 
-final class SqliteVendingMachineRepository implements VendingMachineRepositoryInterface
+final class SqliteVendingMachineRepository implements VendingMachineRepository
 {
     private \PDO $pdo;
 
@@ -84,35 +85,66 @@ final class SqliteVendingMachineRepository implements VendingMachineRepositoryIn
     /** @param array<string, Item> $items */
     private function saveItems(array $items): void
     {
-        $stmt = $this->pdo->prepare('UPDATE items SET stock = :stock WHERE selector = :selector');
+        $this->pdo->beginTransaction();
 
-        foreach ($items as $item) {
-            $stmt->execute(['stock' => $item->stock, 'selector' => $item->selector]);
+        try {
+            $stmt = $this->pdo->prepare('UPDATE items SET stock = :stock WHERE selector = :selector');
+
+            foreach ($items as $item) {
+                $stmt->execute(['stock' => $item->stock, 'selector' => $item->selector]);
+            }
+
+            $this->pdo->commit();
+
+        } catch (\Exception $e) {
+            $this->pdo->rollBack();
+            throw $e;
         }
     }
 
     /** @param array<int, int> $coinInventory */
     private function saveCoinInventory(array $coinInventory): void
     {
-        $stmt = $this->pdo->prepare(
-            'INSERT INTO coin_inventory (value_cents, count) VALUES (:value, :count)
-             ON CONFLICT(value_cents) DO UPDATE SET count = excluded.count'
-        );
+        $this->pdo->beginTransaction();
 
-        foreach ($coinInventory as $valueCents => $count) {
-            $stmt->execute(['value' => $valueCents, 'count' => $count]);
+        try {
+            $stmt = $this->pdo->prepare(
+                'INSERT INTO coin_inventory (value_cents, count) VALUES (:value, :count)
+                ON CONFLICT(value_cents) DO UPDATE SET count = excluded.count'
+            );
+
+            foreach ($coinInventory as $valueCents => $count) {
+                $stmt->execute(['value' => $valueCents, 'count' => $count]);
+            }
+
+            $this->pdo->commit();
+
+        } catch (\Exception $e) {
+            $this->pdo->rollBack();
+            throw $e;
         }
+
     }
 
     /** @param Coin[] $coins */
     private function saveInsertedCoins(array $coins): void
     {
-        $values = array_map(fn (Coin $c) => $c->value, $coins);
-        $stmt   = $this->pdo->prepare(
-            'INSERT INTO machine_state (id, inserted_coins) VALUES (1, :coins)
-             ON CONFLICT(id) DO UPDATE SET inserted_coins = excluded.inserted_coins'
-        );
-        $stmt->execute(['coins' => json_encode($values)]);
+        $this->pdo->beginTransaction();
+
+        try {
+            $values = array_map(fn (Coin $c) => $c->value, $coins);
+            $stmt   = $this->pdo->prepare(
+                'INSERT INTO machine_state (id, inserted_coins) VALUES (1, :coins)
+                ON CONFLICT(id) DO UPDATE SET inserted_coins = excluded.inserted_coins'
+            );
+            $stmt->execute(['coins' => json_encode($values)]);
+
+            $this->pdo->commit();
+
+        } catch (\Exception $e) {
+            $this->pdo->rollBack();
+            throw $e;
+        }
     }
 
 }

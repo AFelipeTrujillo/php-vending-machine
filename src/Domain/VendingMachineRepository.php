@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Persistence;
+namespace App\Domain;
 
 use App\Domain\VendingMachine;
 
-interface VendingMachineRepositoryInterface
+interface VendingMachineRepository
 {
     public function load(): VendingMachine;
 

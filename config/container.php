@@ -5,7 +5,7 @@ declare(strict_types=1);
 use App\Infrastructure\Http\JsonErrorHandler;
 use App\Infrastructure\Http\ResponseHandler;
 use App\Infrastructure\Persistence\SqliteVendingMachineRepository;
-use App\Infrastructure\Persistence\VendingMachineRepositoryInterface;
+use App\Domain\VendingMachineRepository;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
@@ -30,7 +30,7 @@ return [
         return new JsonErrorHandler($responseHandler, $logger, $displayErrorDetails);
     }),
 
-    VendingMachineRepositoryInterface::class => \DI\get(SqliteVendingMachineRepository::class),
+    VendingMachineRepository::class => \DI\get(SqliteVendingMachineRepository::class),
 
     SqliteVendingMachineRepository::class => \DI\factory(function () {
         $dbPath = $_ENV['DB_PATH'] ?? dirname(__DIR__) . '/database/vending-machine.db';

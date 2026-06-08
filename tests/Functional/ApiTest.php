@@ -32,7 +32,7 @@ final class ApiTest extends TestCase
         $containerBuilder->addDefinitions(require __DIR__ . '/../../config/container.php');
 
         $containerBuilder->addDefinitions([
-            \App\Infrastructure\Persistence\VendingMachineRepositoryInterface::class =>
+            \App\Domain\VendingMachineRepository::class =>
                 \DI\value($repository),
             SqliteVendingMachineRepository::class =>
                 \DI\value($repository),

@@ -31,6 +31,6 @@
     "scripts" : {
         "test": "docker compose exec app vendor/bin/phpunit",
         "stan": "docker compose exec app vendor/bin/phpstan analyse src --level=8",
-        "fix": "docker compose exec app vendor/bin/php-cs-fixer fix --dry-run --diff --allow-risky=yes"
+        "fix": "docker compose exec app vendor/bin/php-cs-fixer fix --diff --allow-risky=yes"
     }
 }

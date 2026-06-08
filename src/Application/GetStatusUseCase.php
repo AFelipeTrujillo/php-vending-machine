@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Application;
 
 use App\Application\Response\StatusResponse;
-use App\Infrastructure\Persistence\VendingMachineRepositoryInterface;
+use App\Domain\VendingMachineRepository;
 
 final class GetStatusUseCase
 {
     public function __construct(
-        private readonly VendingMachineRepositoryInterface $repository,
+        private readonly VendingMachineRepository $repository,
     ) {
     }
 

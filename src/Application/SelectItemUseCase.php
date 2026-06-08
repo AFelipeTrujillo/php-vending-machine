@@ -6,12 +6,12 @@ namespace App\Application;
 
 use App\Domain\Coin;
 use App\Domain\Item;
-use App\Infrastructure\Persistence\VendingMachineRepositoryInterface;
+use App\Domain\VendingMachineRepository;
 
 final class SelectItemUseCase
 {
     public function __construct(
-        private readonly VendingMachineRepositoryInterface $repository,
+        private readonly VendingMachineRepository $repository,
     ) {
     }
 

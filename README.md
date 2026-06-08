@@ -23,7 +23,8 @@ src/
     ServiceUseCase.php
     GetStatusUseCase.php
     ServiceRequest.php
-    ValidationException.php
+    Exception/
+      ValidationException.php
   Infrastructure/
     Persistence/        # SQLite implementation of the repository interface.
     Http/               # Slim 4 controller and route definitions.
@@ -87,7 +88,7 @@ Slim 4 handles routing and request parsing. `VendingMachineController` translate
 
 **Persistence**
 
-`SqliteVendingMachineRepository` implements the `VendingMachineRepositoryInterface` (defined in Domain) using PDO and SQLite. The interface living in Domain means the domain never depends on Infrastructure — the dependency is inverted.
+`SqliteVendingMachineRepository` implements the `VendingMachineRepository` (defined in Domain) using PDO and SQLite. The interface living in Domain means the domain never depends on Infrastructure — the dependency is inverted.
 
 ---
 

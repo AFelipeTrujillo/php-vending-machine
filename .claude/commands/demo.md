@@ -23,8 +23,8 @@ POST /items/soda
 Expected output: `{ "returned": [0.10, 0.10] }`
 
 ```
-POST /coins  {"coin": 0.10}
-POST /coins  {"coin": 0.10}
+POST /coins  {"coin": "0.10"}
+POST /coins  {"coin": "0.10"}
 POST /return-coin
 ```
 
@@ -34,7 +34,7 @@ POST /return-coin
 Expected output: `{ "item": "WATER", "change": [0.25, 0.10] }`
 
 ```
-POST /coins  {"coin": 1}
+POST /coins  {"coin": "1"}
 POST /items/water
 ```
 
